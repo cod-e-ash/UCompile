@@ -1,0 +1,15 @@
+/* PROJECT     : AB UTILITIES                                               */
+/* PROGRAMMER  : ASHISH BAGADDEO                                            */
+/* DATE        : 01/01/2014                                                 */
+/* DESCRIPTION : COMMAND FILE                                               */
+/* © COPYRIGHT : ICORE             MAILTO: SUPPORT§ICORE.CO.IN              */
+/*--------------------------------------------------------------------------*/
+             CMD        PROMPT('COMPILE WITH SOURCE')
+             PARM       KWD(SRCLIB) TYPE(*CHAR) LEN(10) +
+                          PROMPT('SOURCE LIB')
+             PARM       KWD(SRCFIL) TYPE(*CHAR) LEN(10) +
+                          PROMPT('SOURCE FILE')
+             PARM       KWD(SRCMBR) TYPE(*CHAR) LEN(10) +
+                          PROMPT('SOURCE MEMBER')
+             PARM       KWD(SRCTYP) TYPE(*CHAR) LEN(10) +
+                          PROMPT('SOURCE TYPE')

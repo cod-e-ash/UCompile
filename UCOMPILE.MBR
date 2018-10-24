@@ -1,0 +1,118 @@
+ /*‚Project        : AB Utilities          (LIC:xxxxxx)                     */
+ /*‚Programmer     : Ashish Bagaddeo                                        */
+ /*‚Date           : 01/01/2014                                             */
+ /*‚Description    : Compile object with source                             */
+ /*‚Copyright      : iCORE                    mailto: support§icore.co.in   */
+ /*‚Usage          : Option in User-Defined Options                         */
+ /*‚                 CP  COMPILE(&L &F &N &S)                               */
+ /*‚                 &L - Library Name                                      */
+ /*‚                 &F - File Name                                         */
+ /*‚                 &N - Member Name                                       */
+ /*‚                 &S - Object Type                                       */
+ /*‚*************************************************************************/
+             PGM        PARM(&SRCLIB &SRCFIL &SRCMBR &SRCTYP)
+
+             DCL        VAR(&SRCLIB)   TYPE(*CHAR) LEN(10)
+             DCL        VAR(&SRCFIL)   TYPE(*CHAR) LEN(10)
+             DCL        VAR(&SRCMBR)   TYPE(*CHAR) LEN(10)
+             DCL        VAR(&SRCTYP)   TYPE(*CHAR) LEN(10)
+             DCL        VAR(&OBJLIB)   TYPE(*CHAR) LEN(10)
+             DCL        VAR(&DTALIB)   TYPE(*CHAR) LEN(10)
+
+             COPYRIGHT  TEXT('iCORE - Ashish Bagaddeo')
+             MONMSG     MSGID(CPF0000) EXEC(GOTO CMDLBL(ERROR))
+
+             IF         COND(&SRCLIB *EQ ' ') THEN(GOTO CMDLBL(ERROR))
+             ELSE       CMD(DO)
+             CHGVAR       VAR(&OBJLIB) VALUE(&SRCLIB)
+             CHGVAR       VAR(&DTALIB) VALUE(&SRCLIB)
+             ENDDO
+
+             SELECT
+ /*‚CLLE   */
+             WHEN       COND(&SRCTYP *EQ 'CLLE') THEN(DO)
+             CRTBNDCL   PGM(&OBJLIB/&SRCMBR) +
+                          SRCFILE(&SRCLIB/&SRCFIL) SRCMBR(&SRCMBR) +
+                          DBGVIEW(*SOURCE)
+             ENDDO
+
+ /*‚CLP    */
+             WHEN       COND(&SRCTYP *EQ 'CLP') THEN(DO)
+             CRTCLPGM   PGM(&OBJLIB/&SRCMBR) +
+                          SRCFILE(&SRCLIB/&SRCFIL) SRCMBR(&SRCMBR)
+             ENDDO
+
+ /*‚RPGLE  */
+             WHEN       COND(&SRCTYP *EQ 'RPGLE') THEN(DO)
+             CRTBNDRPG  PGM(&OBJLIB/&SRCMBR) +
+                          SRCFILE(&SRCLIB/&SRCFIL) SRCMBR(&SRCMBR) +
+                          DBGVIEW(*SOURCE)
+             ENDDO
+
+ /*‚SQLRPG */
+             WHEN       COND(&SRCTYP *EQ 'SQLRPGLE') THEN(DO)
+             CRTSQLRPGI OBJ(&OBJLIB/&SRCMBR) +
+                          SRCFILE(&SRCLIB/&SRCFIL) SRCMBR(&SRCMBR) +
+                          COMMIT(*NONE) DBGVIEW(*SOURCE)
+             ENDDO
+
+ /*‚RPG    */
+             WHEN       COND(&SRCTYP *EQ 'RPG') THEN(DO)
+             CRTRPGPGM  PGM(&OBJLIB/&SRCMBR) +
+                          SRCFILE(&SRCLIB/&SRCFIL) SRCMBR(&SRCMBR)
+             ENDDO
+
+ /*‚CMD    */
+             WHEN       COND(&SRCTYP *EQ 'CMD') THEN(DO)
+             CRTCMD     CMD(&OBJLIB/&SRCMBR) PGM(&SRCMBR) +
+                          SRCFILE(&SRCLIB/&SRCFIL) SRCMBR(&SRCMBR)
+             ENDDO
+
+ /*‚PF     */
+             WHEN       COND(&SRCTYP *EQ 'PF') THEN(DO)
+             CRTPF      FILE(&DTALIB/&SRCMBR) +
+                          SRCFILE(&SRCLIB/&SRCFIL) SRCMBR(&SRCMBR)
+             ENDDO
+
+ /*‚LF     */
+             WHEN       COND(&SRCTYP *EQ 'LF') THEN(DO)
+             CRTLF      FILE(&DTALIB/&SRCMBR) +
+                          SRCFILE(&SRCLIB/&SRCFIL) SRCMBR(&SRCMBR)
+             ENDDO
+
+ /*‚DSPF   */
+             WHEN       COND(&SRCTYP *EQ 'DSPF') THEN(DO)
+             CRTDSPF    FILE(&DTALIB/&SRCMBR) +
+                          SRCFILE(&SRCLIB/&SRCFIL) SRCMBR(&SRCMBR)
+             ENDDO
+
+ /*‚MENU   */
+             WHEN       COND(&SRCTYP *EQ 'MNUDDS') THEN(DO)
+             CHKOBJ     OBJ(&OBJLIB/&SRCMBR) OBJTYPE(*MSGF)
+             MONMSG     MSGID(CPF9801) EXEC(CRTMSGF +
+                          MSGF(&SRCLIB/&SRCMBR))
+             CRTDSPF    FILE(&OBJLIB/&SRCMBR) +
+                          SRCFILE(&SRCLIB/&SRCFIL) SRCMBR(&SRCMBR)
+             CRTMNU     MENU(&OBJLIB/&SRCMBR) TYPE(*DSPF) +
+                          DSPF(&SRCLIB/*MENU) MSGF(&SRCLIB/*MENU)
+             ENDDO
+
+ /*‚UNKNOWN */
+             OTHERWISE  CMD(DO)
+             SNDPGMMSG  MSG('** ERROR : Unknown Format') +
+                          MSGTYPE(*INFO)
+             GOTO       CMDLBL(EXIT)
+             ENDDO
+
+             ENDSELECT
+             SNDPGMMSG  MSG('** SUCCESS : File / Program Compiled') +
+                          MSGTYPE(*INFO)
+             GOTO       CMDLBL(EXIT)
+
+ ERROR:
+             SNDPGMMSG  MSG('** ERROR : Compile Failed') +
+                          MSGTYPE(*INFO)
+
+ EXIT:
+              ENDPGM
+     A*---------------------------------------------------------------------*
