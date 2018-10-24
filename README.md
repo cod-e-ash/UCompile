@@ -59,12 +59,12 @@ Add new user option.
 
 Enter command `WKRMBRPDM` and then goto user options using `F16`.  
 Press `F6` to add  a new user option. 
-Set `Option` as `CP`.  (Instead of CP, you can use any aything that you want for option.)  
-Set `Command` as `UCOMPILE(&L &F &N &S)`  
+Set _Option_ as `CP`.  (Instead of CP, you can use any aything that you want for option.)  
+Set _Command_ as `UCOMPILE(&L &F &N &S)`  
 
 
 ## Running
-Now, instead of compiling with Option 14, you can use CP to compile with your options.
+Now, instead of compiling with _Option 14_, you can use **CP** to compile with your own options.
 
 ## Authors
 
