@@ -55,10 +55,10 @@ CRTBNDCL PGM(YOURLIB/UCOMPILE) SRCFILE((YOURLIB/RPGUTILS) SRCMBR(UCOMPILE) REPLA
 CRTCMD CMD(YOURLIB/UCOMPILE) PGM(*LIBL/UCOMPILE) SRCFILE(YOURLIB/RPGUTILS) SRCMBR(UCOMPCMD) REPLACE(*YES)  
 ```
 **Step4.**
-Enter command `WKRMBRPDM` and the got to user options using `F16`.  
-Set Option as `CP`. 
-You can use any aything that to want for option, just make sure its not already used.  
-Set Command as `UCOMPILE(&L &F &N &S)`  
+Enter command `WKRMBRPDM` and then goto user options using `F16`.  
+Press `F6` to add  a new user option. 
+Set `Option` as `CP`.  (Instead of CP, you can use any aything that you want for option.)  
+Set `Command` as `UCOMPILE(&L &F &N &S)`  
 
 
 ## Running
