@@ -58,7 +58,7 @@ CRTCMD CMD(YOURLIB/UCOMPILE) PGM(*LIBL/UCOMPILE) SRCFILE(YOURLIB/RPGUTILS) SRCMB
 Add new user option.  
 
 Enter command `WKRMBRPDM` and then goto user options using `F16`.  
-Press `F6` to add  a new user option. 
+Press `F6` to add  a new user option.  
 Set _Option_ as `CP`.  (Instead of CP, you can use any aything that you want for option.)  
 Set _Command_ as `UCOMPILE(&L &F &N &S)`  
 
