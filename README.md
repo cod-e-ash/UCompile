@@ -1,6 +1,7 @@
 # Compile with Source and defaults
 
-This is part of my **`RPG Utils`** series to help overcome some of the day-to-day activities which can be automated.  
+<em>This is part of my **`RPG Utils`** series to help overcome some of the day-to-day activities which can be automated.</em>  
+
 We usually compile our objects in source while testing. Also, there are some parameters that we need to change everytime before compilation. This program will help you with that.   
 
 
