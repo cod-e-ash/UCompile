@@ -1,7 +1,7 @@
-# RPG Find Source
+# RPG Find Loop/Condition's Start and End
 
 This is part of my **`RPG Utils`** series to help overcome some of the day-to-day activities which can be automated.  
-Developers, QA, Analyst or anyone who wants to access source code in RPG _rejoice_. This will help you to find any source within many libraries with just one command. Just set the library list once and enjoy.
+During analysis of old rpg or cl codes, we come across sections where its very confusing that which line is part of which if condition or dow loop. This happens moslty when we deal with old rpg codes or some linear code with no indentation. This ustility will help to find the line to start of conditions like (IF, SELECT etc.) and also looping conditions like (DOW, DOU, WHILE, FOR etc.)
 
 ## Getting Started
 
@@ -17,32 +17,17 @@ CRTSRCPF RPGUTILS
 
 ### Program and Object Descriptions  
   
-  * `LIBLISTF`  
-  This is a PF source which will hold the library list data.  
+  * `IFLBLF`  
+  This is a PF source which will hold output after running the program on any give source code file.  
 
-  * `LIBLISTP`  
-  This is the program to maintain library list.  
-
-  * `LIBLISTD`  
-  Display file required for library list program.  
-
-  * `LIBLISTCMD`  
-  Command source file.    
-
-  * `VALLSRCC`  
+  * `IFLBLC`  
   Driver CL program.  
 
-  * `VALLSRCCMD`  
+  * `IFLBLCMD`  
   Driver command source file.  
   
-  * `VALLSRCD`  
-  Display file used by main program.
-  
-  * `VALLSRCP`  
+  * `IFLBLP`  
   Main program.  
-  
-  * `CPYBK`  
-  A copybook to store prototype definations and other. If you use any other library that RPGUTILS, please change the path in above RPG program/s for this copy book.  
 
 
 ### Installing
@@ -63,71 +48,48 @@ Upload all files to AS400 server, use ftp. <em>DO NOT CHANGE THE MODE TO BINARY<
 **Step 2.**
 Change the atribute type accordingly once uploaded.
 ```
-  LIBLISTCMD  CMD     
-  LIBLISTD    DSPF    
-  LIBLISTF    PF      
-  LIBLISTP    SQLRPGLE
-  VALLSRCC    CLLE    
-  VALLSRCCMD  CMD     
-  VALLSRCD    DSPF    
-  VALLSRCP    SQLRPGLE       
-  CPYBK       CPY
+  IFLBLC      CLLE    
+  IFLBLCMD    CMD     
+  IFLBLF      PF      
+  IFLBLP      SQLRPGLE
 ```
 **Step3.**
 Use below command to compile.
-```
-DSPOBJD OBJ(YOURLIB) OBJTYPE(*LIB) OUTPUT(*OUTFILE) OUTFILE(QTEMP/LIBINFOF)   
+```   
+CRTPF FILE(YOURLIB/IFLBLF) SRCFILE(YOURLIB/RPGUTILS) SRCMBR(IFLBLF)           
 
-CRTCMD CMD(YOURLIB/LIBLIST) PGM(*LIBL/LIBLISTP) SRCFILE(YOURLIB/RPGUTILS) SRCMBR(LIBLISTCMD) REPLACE(*YES)  
+CRTSQLRPGI OBJ(YOURLIB/IFLBLP) SRCFILE((YOURLIB/RPGUTILS) SRCMBR(IFLBLP) OBJTYPE(*PGM) REPLACE(*YES)  
 
-CRTDSPF FILE(YOURLIB/LIBLISTD) SRCFILE(YOURLIB/RPGUTILS) SRCMBR(LIBLISTD) REPLACE(*YES)  
+CRTBNDCL PGM(YOURLIB/IFLBLC) SRCFILE((YOURLIB/RPGUTILS) SRCMBR(IFLBLC) REPLACE(*NO)               
 
-CRTPF FILE(YOURLIB/LIBLISTF) SRCFILE(YOURLIB/RPGUTILS) SRCMBR(LIBLISTF)           
-
-CRTSQLRPGI OBJ(YOURLIB/LIBLISTP) SRCFILE((YOURLIB/RPGUTILS) SRCMBR(LIBLISTP) OBJTYPE(*PGM) REPLACE(*YES)  
-
-CRTBNDCL PGM(YOURLIB/VALLSRCC) SRCFILE((YOURLIB/RPGUTILS) SRCMBR(VALLSRCC) REPLACE(*NO)               
-
-CRTCMD CMD(YOURLIB/FA) PGM(*LIBL/VALLSRCC) SRCFILE(YOURLIB/RPGUTILS) SRCMBR(VALLSRCCMD) REPLACE(*YES)  
-
-CRTDSPF FILE(YOURLIB/VALLSRCD) SRCFILE(YOURLIB/RPGUTILS) SRCMBR(LIBLISTD) REPLACE(*YES)  
-
-CRTSQLRPGI OBJ(YOURLIB/VALLSRCP) SRCFILE((YOURLIB/RPGUTILS) SRCMBR(VALLSRCP) OBJTYPE(*PGM) REPLACE(*YES)  
-
+CRTCMD CMD(YOURLIB/IFLBL) PGM(*LIBL/IFLBLC) SRCFILE(YOURLIB/RPGUTILS) SRCMBR(IFLBLCMD) REPLACE(*YES)  
 ```
 
-**Step 4.** 
-
-Add libraries to library list using below command.
-```
-LIBLIST
-```
-This would ask for following things:
-```
-LIBRARY......:           
-SEQUENCE.....:           
-OBJECT/SOURCE:    (O/S/B)
-PROGRAM/DATA.:    (P/D/B)
-```
-Library is the library you want to add. Leave the sequence blank for now. Used for search sequence of libraries.  
-
-**O**bject or **S**ource or **B**oth. Since library list is used by my other utilites, this is some extra information for now.  
-Object library would be library which contains objects only. Source would be for source. Both for Both :)  
-You can enter 'B'.
-
-**Programs** or **Data** or **Both**. If library is object library, then whether it holds only programs or files or both.  
-You can enter 'B'.
 
 ## Running
 
 ```
-FA <source member name>
+IFLBL <source member name> <source file> <source library>
 ```
-E.g. Now, if we want to find all the places (libraries that we added in library list) where source for LIBLISTP is present, we would:
-FA LIBLISTP (this will show the source from all the libraries, if present in that library)
+E.g.
+IFLBL SRCMBR(IFLBLP) SRCFIL(RPGUTILS) SRCLIB(YOURLIB)
+This will output a file IFLBLF. FSTRSEQ is the start line, FEBDSEQ is the end of the sequence.
+Rest fields will tell you if there are else conditions etc.
+```
+SELECT * FROM IFLBLF
 
-You can the then position the cursor on select line and press enter to view the source.
-
+O/P:
+FID    FSTRSEQ    FENDSEQ   FIFDATA                                              
+  1      47.00     220.00           DoW SQLCOD = 0;                              
+  2      50.00     216.00             If %SubSt(SRCDTA:7:1) <> '*' And (         
+  3      55.00     140.00               Select;                                  
+  4      69.00      72.00                 If %SubSt(wkStrUpper:26:5) = '  CAS' Or
+  5     101.00     113.00                 If FElseSq1 = *Zeros;                  
+  6     128.00     130.00                 If wkCasFlg = *On;                     
+  7     146.00     150.00               If %Scan('//':SRCDTA) > 0;               
+  8     155.10     155.13                 If wkFoundStart <= 0;                  
+  9     155.16     155.22                 If wkFoundStart > 0;                   
+```
 
 ## Authors
 
